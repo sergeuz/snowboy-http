@@ -27,11 +27,14 @@ function runAction(act) {
   if (act.type != 'get') {
     throw new Error(`Invalid action: ${act.type}`);
   }
-  log.trace(`GET: ${act.url}`);
   try {
-    http.get(act.url, (resp) => {
+    log.trace(`GET: ${act.url}`);
+    const req = http.get(act.url, (resp) => {
       log.trace(`Status code: ${resp.statusCode}`);
       resp.resume();
+    });
+    req.on('error', err => {
+      log.error(`Error: ${err.message}`);
     });
   } catch (err) {
     log.error(`Error: ${err.message}`);
